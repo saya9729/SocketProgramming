@@ -18,10 +18,12 @@ public:
 
 class Player {
 private:
-	string playerName;
+	string name;
+	int point;
 public:
 	Player(string);
 	string MakeGuess();
+
 };
 
 class Database {
@@ -38,9 +40,11 @@ class GameCordinator {
 private:
 	int playerLimit;
 	vector<Player> playerList;
+	Database* database;
 public:
 	GameCordinator();
-	void loadDatabase();
+	void loadDatabase(string);
 	void startGame();
+	void Update();
 };
 
