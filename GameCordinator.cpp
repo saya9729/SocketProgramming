@@ -18,3 +18,7 @@ void GameCordinator::Update() {
 	//not quite done
 }
 
+GameCordinator::~GameCordinator() {
+	delete database;
+}
+

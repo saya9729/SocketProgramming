@@ -22,6 +22,9 @@ private:
 	int point;
 public:
 	Player(string);
+	string registerName();
+	bool checkName(string);
+	void retryName();
 	string MakeGuess();
 
 };
@@ -43,6 +46,7 @@ private:
 	Database* database;
 public:
 	GameCordinator();
+	~GameCordinator();
 	void loadDatabase(string);
 	void startGame();
 	void Update();
