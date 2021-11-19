@@ -142,7 +142,7 @@
   <ItemGroup>
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="GameCordinator.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="game_loop.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Puzzle.cpp" />
   </ItemGroup>

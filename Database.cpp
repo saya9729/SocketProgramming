@@ -29,7 +29,7 @@ void Database::LoadPuzzleFromFile(string path) {
 	}
 }
 
-Puzzle Database::getRandomPuzzle() {
+Puzzle Database::GetRandomPuzzle() {
 	int index = rand() & puzzleList.size();
 	Puzzle randomPuzzle = puzzleList[index];
 	return randomPuzzle;
