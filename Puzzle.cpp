@@ -37,3 +37,7 @@ void Puzzle::UpdateUnknownKeyword() {
 		}
 	}
 }
+
+int Puzzle::CountOccurenceOfChar(string guessCharacter) {
+	return count(keyword.begin(), keyword.end(), guessCharacter);
+}

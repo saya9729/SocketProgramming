@@ -8,7 +8,6 @@ void GameCordinator::LoadDatabase(string path) {
 	database = new Database(path);
 }
 
-
 void GameCordinator::Update() {
 	if (state == "waitingPlayer") {
 		CheckPlayerRegister();
@@ -56,3 +55,111 @@ bool GameCordinator::IsUniqueName(string inputName) {
 	return isUnique;
 }
 
+void GameCordinator::UpdateGameEvent() {
+	if (!isWaiting) {
+		SendPuzzle();
+		SendIsYourTurn();
+		isWaiting = true;
+	}
+	else {
+		if (CheckAnswerBuffer()) {
+			isWaiting = false;
+			if (currentTurn > 2) {
+				if (guessKeyword.length() != 0) {
+					if (CheckGuessKeyword()) {
+						AddPointCorrectKeyword();
+						SendKeywordIsCorrect();
+						EndGame();
+						isWaiting = false;
+						return;
+					}
+					else {
+						DisqualifyPlayer();
+						NextPlayer();
+						SendIsYourTurn();
+						isWaiting = true;
+						return;
+					}
+				}
+			}
+			if (CheckGuessCharacter()) {
+				AddPointCorrectCharacter();
+				SendCharacterIsCorrect();
+				UpdatePuzzle();
+				SendPuzzle();
+				SendIsYourTurn();
+				isWaiting = true;
+			}
+			else {
+				if (!IsAllDisqualified()) {
+					NextPlayer();
+					SendIsYourTurn();
+					isWaiting = true;
+				}
+				else {
+					EndGame();
+					isWaiting = false;
+				}
+			}
+		}
+	}
+}
+
+void GameCordinator::StartGame() {
+	currentPlayer = &playerList[currentPlayerIndex];
+	state = "runningGame";
+	currentPlayerIndex = 0;
+	isWaiting = false;
+	currentTurn = 1;
+	currentPuzzle = &((*database).GetRandomPuzzle());
+}
+
+void GameCordinator::DisqualifyPlayer() {
+	(*currentPlayer).Disqualify();
+	disqualifyCount++;
+}
+
+void GameCordinator::AddPointCorrectCharacter() {
+	(*currentPlayer).AddPoint(1);
+}
+
+void GameCordinator::AddPointCorrectKeyword() {
+	(*currentPlayer).AddPoint(5);
+}
+
+bool GameCordinator::IsAllDisqualified() {
+	if (disqualifyCount == playerList.size()) {
+		return true;
+	}
+	return false;
+}
+
+void GameCordinator::NextPlayer() {
+	int index;
+	for (int i = 1; i < playerList.size()+1; i++) {
+		index = (currentPlayerIndex + i) % playerList.size();
+		if (playerList[index].IsQualify()) {
+			if (index <= currentPlayerIndex) {
+				currentTurn++;
+			}
+			currentPlayerIndex = index;
+			currentPlayer = &playerList[currentPlayerIndex];
+			return;
+		}
+	}
+}
+
+bool GameCordinator::CheckGuessCharacter() {
+	return (*currentPuzzle).GuessACharacter(guessCharacter);
+}
+bool GameCordinator::CheckGuessKeyword() {
+	return (*currentPuzzle).GuessKeyword(guessKeyword);
+}
+bool GameCordinator::CheckAnswerBuffer() {
+	ResetGuess();
+	//more
+}
+void GameCordinator::ResetGuess() {
+	guessCharacter = "";
+	guessKeyword = "";
+}
